@@ -1,7 +1,8 @@
--- Not really used for now, but I think it makes good practise to define this for each mod
+-- Mod Container -------------------------------------------------------
 openion_glostone_building_blocks = {}
 
--- Settings
+-- Settings ------------------------------------------------------------
+
 local stone_emission = minetest.registered_nodes["ethereal:glostone"].light_source or 12
 local stone_stairs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_stone_stairs_emission") or 0.7
 local stone_slabs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_stone_slabs_emission") or 0.5
