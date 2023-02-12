@@ -110,6 +110,16 @@ minetest.register_craft(
     }
 )
 
+--Reverse Brick Recipe
+minetest.register_craft(
+	{
+		type = 'cooking',
+		output = 'ethereal:glostone',
+		recipe = 'openion_glostone_building_blocks:glostone_brick',
+		cooktime = 9,
+	}
+)
+
 --Block Recipe
 minetest.register_craft(
     {
@@ -120,4 +130,14 @@ minetest.register_craft(
             {'ethereal:glostone', 'ethereal:glostone', 'ethereal:glostone'}
         }
     }
-) 
+)
+
+--Reverse Block Recipe
+minetest.register_craft(
+	{
+		type = 'cooking',
+		output = 'ethereal:glostone',
+		recipe = 'openion_glostone_building_blocks:glostone_block',
+		cooktime = 9,
+	}
+)
