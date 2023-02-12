@@ -1,3 +1,6 @@
+# Enable Stairs Mod (if present)
+openion_glostone_building_blocks_enable_mod_stairs (Use Stairs Mod) bool true
+
 # This is the light emission strength of the Glo Stone Stairs in relation to the original Glo Stone.
 openion_glostone_building_blocks_stone_stairs_emission (Stone Stairs Emission Multiplier) float 0.7
 
@@ -21,3 +24,5 @@ openion_glostone_building_blocks_block_slabs_emission (Block Stairs Emission Mul
 
 # This is the light emission strength of the Glo Stone Block Slabs in relation to the original Glo Stone.
 openion_glostone_building_blocks_block_slabs_emission (Block Slabs Emission Multiplier) float 0.5
+
+

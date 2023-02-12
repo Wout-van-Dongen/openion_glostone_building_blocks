@@ -3,6 +3,10 @@ openion_glostone_building_blocks = {}
 
 -- Settings ------------------------------------------------------------
 
+--Mods
+local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs')
+
+--Light Emission
 local stone_emission = minetest.registered_nodes["ethereal:glostone"].light_source or 12
 local stone_stairs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_stone_stairs_emission") or 0.7
 local stone_slabs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_stone_slabs_emission") or 0.5
@@ -56,7 +60,7 @@ for node_name, def in pairs(node_defs) do
 		)
 	end
 	
-	if minetest.get_modpath("stairs") ~= nil then
+	if minetest.get_modpath("stairs") ~= nil and enable_mod_stairs then
 		stairs.register_stair_and_slab(
 			node_name,
 			mod_prefix .. node_name,
