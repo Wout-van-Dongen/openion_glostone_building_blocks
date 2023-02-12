@@ -1,26 +1,46 @@
 -- Mod Container -------------------------------------------------------
 openion_glostone_building_blocks = {}
 
+-- Functions -----------------------------------------------------------
+local function table_copy(table)
+	local copy = {}
+	for key, value in pairs(table) do
+		copy[key] = value
+	end
+	return copy
+end
+
+function table_update(table, def)
+	for key, value in pairs(def) do
+		table[key] = value
+	end
+end
+
+
 -- Settings ------------------------------------------------------------
 
 --Mods
 local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs', true)
 
+ --Ethereal
+local glostone_def = minetest.registered_nodes['ethereal:glostone']
+
+
 --Light Emission
-local stone_emission = minetest.registered_nodes['ethereal:glostone'].light_source or 12
+local stone_emission = glostone_def.light_source or 12
 local brick_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_brick_emission_multiplier') or 0.9
 local block_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_block_emission_multiplier') or 1
 local cobble_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_cobble_emission_multiplier') or 0.3 
 local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier') or 0.7
 local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier') or 0.5
 
+
+
 -- Definitions ---------------------------------------------------------
 
 local node_defs = {
 	glostone = {
-		description = 'Glostone',
-		tiles = 'ethereal_glostone.png',
-		light_source = stone_emission,
+
 	},
 	glostone_brick = {
 		description = 'Glostone Brick',
@@ -49,18 +69,17 @@ local node_defs = {
 
 for node_name, def in pairs(node_defs) do
 	local mod_prefix = 'ethereal:'
+	local new_def = table_copy(glostone_def)
+	table_update(new_def, def)
+	new_def.drop = mod_prefix .. node_name
+	
 	if minetest.registered_nodes[mod_prefix .. node_name] == nil then
 		mod_prefix = 'openion_glostone_building_blocks:'
+		
+		
 		minetest.register_node(
 			mod_prefix .. node_name,
-			{
-				description = def.description,
-				tiles = def.tiles,
-				groups = {cracky = 2},
-				light_source = def.light_source,
-				drop = mod_prefix .. node_name,
-				sounds = default.node_sound_stone_defaults()
-			}
+			new_def
 		)
 	end
 	
@@ -69,38 +88,36 @@ for node_name, def in pairs(node_defs) do
 		stairs.register_stair_and_slab(
 			node_name,
 			mod_prefix .. node_name,
-			{
-				cracky = 2
-			},
-			type(def.tiles) == 'table' and def.tiles or {def.tiles},
-			def.description .. ' Stair',
-			def.description .. ' Slab',
-			default.node_sound_stone_defaults()
+			new_def.groups,
+			type(new_def.tiles) == 'table' and new_def.tiles or {new_def.tiles},
+			new_def.description .. ' Stair',
+			new_def.description .. ' Slab',
+			new_def.sounds
 		)
 	
 	--Override Light Emission
 	minetest.override_item(
         'stairs:stair_' .. node_name,
         {
-            light_source = def.light_source * stair_emission_multiplier
+            light_source = new_def.light_source * stair_emission_multiplier
         }
     )
     minetest.override_item(
         'stairs:stair_outer_' .. node_name,
         {
-            light_source = def.light_source * stair_emission_multiplier
+            light_source = new_def.light_source * stair_emission_multiplier
         }
     )
     minetest.override_item(
         'stairs:stair_inner_' .. node_name,
         {
-            light_source = def.light_source * stair_emission_multiplier
+            light_source = new_def.light_source * stair_emission_multiplier
         }
     )
     minetest.override_item(
         'stairs:slab_' .. node_name,
         {
-            light_source = def.light_source * slab_emission_multiplier
+            light_source = new_def.light_source * slab_emission_multiplier
         }
     )
     end
