@@ -56,6 +56,7 @@ for node_name, def in pairs(node_defs) do
 		)
 	end
 	
+	--Registering Stairs
 	if minetest.get_modpath("stairs") ~= nil and enable_mod_stairs then
 		stairs.register_stair_and_slab(
 			node_name,
@@ -69,7 +70,7 @@ for node_name, def in pairs(node_defs) do
 			default.node_sound_stone_defaults()
 		)
 	
-	-- Override Light Emission
+	--Override Light Emission
 	minetest.override_item(
         'stairs:stair_' .. node_name,
         {
