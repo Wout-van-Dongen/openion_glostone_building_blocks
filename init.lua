@@ -12,23 +12,93 @@ local block_emission_multiplier = minetest.settings:get("openion_glostone_buildi
 local block_stairs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_block_stairs_emission") or 0.7
 local block_slabs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_block_slabs_emission") or 0.5
 
--- Glostone Brick
-minetest.register_node(
-    'openion_glostone_building_blocks:glostone_brick',
-    {
-    	description = 'Glo Stone Brick',
-    	tiles = {
-            'ethereal_glostone.png^openion_glostone_building_blocks_brick_overlay.png'
-        },
-    	groups = {
-            cracky = 2
-        },
-    	light_source = stone_emission * brick_emission_multiplier,
-    	drop = 'openion_glostone_building_blocks:glostone_brick',
-        sounds = default.node_sound_stone_defaults()
-    }
-)
+-- Definitions ---------------------------------------------------------
 
+local node_defs = {
+	glostone = {
+		description = 'Glostone',
+		tiles = 'ethereal_glostone.png',
+		light_source = stone_emission,
+	},
+	glostone_brick = {
+		description = 'Glostone Brick',
+		tiles = {
+			'ethereal_glostone.png^openion_glostone_building_blocks_brick_overlay.png',
+		},
+		light_source = stone_emission * brick_emission_multiplier,
+	},
+	glostone_block = {
+		description = 'Glostone Block',
+		tiles = {
+			'ethereal_glostone.png^openion_glostone_building_blocks_block_overlay.png',
+		},
+		light_source = stone_emission * block_emission_multiplier,
+	},
+}
+
+-- Registering ---------------------------------------------------------
+
+for node_name, def in pairs(node_defs) do
+	local mod_prefix = 'ethereal:'
+	if minetest.registered_nodes[mod_prefix .. node_name] == nil then
+		mod_prefix = 'openion_glostone_building_blocks:'
+		minetest.register_node(
+			mod_prefix .. node_name,
+			{
+				description = def.description,
+				tiles = def.tiles,
+				groups = {cracky = 2},
+				light_source = def.light_source,
+				drop = mod_prefix .. node_name,
+				sounds = default.node_sound_stone_defaults()
+			}
+		)
+	end
+	
+	if minetest.get_modpath("stairs") ~= nil then
+		stairs.register_stair_and_slab(
+			node_name,
+			mod_prefix .. node_name,
+			{
+				cracky = 2
+			},
+			type(def.tiles) == 'table' and def.tiles or {def.tiles},
+			def.description .. ' Stair',
+			def.description .. ' Slab',
+			default.node_sound_stone_defaults()
+		)
+	
+	-- Override Light Emission
+	minetest.override_item(
+        'stairs:stair_' .. node_name,
+        {
+            light_source = def.light_source * stone_stairs_emission_multiplier
+        }
+    )
+    minetest.override_item(
+        'stairs:stair_outer_' .. node_name,
+        {
+            light_source = def.light_source * stone_stairs_emission_multiplier
+        }
+    )
+    minetest.override_item(
+        'stairs:stair_inner_' .. node_name,
+        {
+            light_source = def.light_source * stone_stairs_emission_multiplier
+        }
+    )
+    minetest.override_item(
+        'stairs:slab_' .. node_name,
+        {
+            light_source = def.light_source * stone_slabs_emission_multiplier
+        }
+    )
+    end
+end
+
+-- Recipes -------------------------------------------------------------
+
+--Brick Recipe
 minetest.register_craft(
     {
         output = 'openion_glostone_building_blocks:glostone_brick 4',
@@ -39,23 +109,7 @@ minetest.register_craft(
     }
 )
 
--- Glostone Block
-minetest.register_node(
-    'openion_glostone_building_blocks:glostone_block',
-    {
-    	description = 'Glo Stone Block',
-    	tiles = {
-            'ethereal_glostone.png^openion_glostone_building_blocks_block_overlay.png'
-        },
-    	groups = {
-            cracky = 2
-        },
-    	light_source = stone_emission * block_emission_multiplier,
-    	drop = 'openion_glostone_building_blocks:glostone_block',
-        sounds = default.node_sound_stone_defaults()
-    }
-)
-
+--Block Recipe
 minetest.register_craft(
     {
         output = 'openion_glostone_building_blocks:glostone_block 9',
@@ -65,127 +119,4 @@ minetest.register_craft(
             {'ethereal:glostone', 'ethereal:glostone', 'ethereal:glostone'}
         }
     }
-)
-
--- Register stairs
-if minetest.get_modpath("stairs") ~= nil then
-    -- Glostone Brick stairs
-    stairs.register_stair_and_slab(
-        'glostone',
-        'ethereal:glostone',
-        {
-            cracky = 2
-        },
-        {
-            'ethereal_glostone.png'
-        },
-        'Glostone Stair',
-        'Glostone Slab',
-        default.node_sound_stone_defaults()
-    )
-
-    minetest.override_item(
-        'stairs:stair_glostone',
-        {
-            light_source = stone_emission * stone_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_outer_glostone',
-        {
-            light_source = stone_emission * stone_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_inner_glostone',
-        {
-            light_source = stone_emission * stone_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:slab_glostone',
-        {
-            light_source = stone_emission * stone_slabs_emission_multiplier
-        }
-    )
-
-    -- Glostone Brick stairs
-    stairs.register_stair_and_slab(
-        'glostone_brick',
-        'openion_glostone_building_blocks:glostone_brick',
-        {
-            cracky = 2
-        },
-        {
-            'ethereal_glostone.png^openion_glostone_building_blocks_brick_overlay.png'
-        },
-        'Glostone Brick Stair',
-        'Glostone Brick Slab',
-        default.node_sound_stone_defaults()
-    )
-
-    minetest.override_item(
-        'stairs:stair_glostone_brick',
-        {
-            light_source = stone_emission * brick_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_outer_glostone_brick',
-        {
-            light_source = stone_emission * brick_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_inner_glostone_brick',
-        {
-            light_source = stone_emission * brick_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:slab_glostone_brick',
-        {
-            light_source = stone_emission * brick_slabs_emission_multiplier
-        }
-    )
-
-    -- Glostone Block stairs
-    stairs.register_stair_and_slab(
-        'glostone_block',
-        'openion_glostone_building_blocks:glostone_block',
-        {
-            cracky = 2
-        },
-        {
-            'ethereal_glostone.png^openion_glostone_building_blocks_block_overlay.png'
-        },
-        'Glostone Block Stair',
-        'Glostone Block Slab',
-        default.node_sound_stone_defaults()
-    )
-
-    minetest.override_item(
-        'stairs:stair_glostone_block',
-        {
-            light_source = stone_emission * block_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_outer_glostone_block',
-        {
-            light_source = stone_emission * block_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_inner_glostone_block',
-        {
-            light_source = stone_emission * block_stairs_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:slab_glostone_block',
-        {
-            light_source = stone_emission * block_slabs_emission_multiplier
-        }
-    )
-end
+) 
