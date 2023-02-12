@@ -4,15 +4,15 @@ openion_glostone_building_blocks = {}
 -- Settings ------------------------------------------------------------
 
 --Mods
-local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs')
+local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs', true)
 
 --Light Emission
 local stone_emission = minetest.registered_nodes['ethereal:glostone'].light_source or 12
-local brick_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_brick_emission_multiplier')-- or 0.9
-local block_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_block_emission_multiplier')-- or 1
-local cobble_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_cobble_emission_multiplier')-- or 0.3 
-local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier')-- or 0.7
-local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier')-- or 0.5
+local brick_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_brick_emission_multiplier') or 0.9
+local block_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_block_emission_multiplier') or 1
+local cobble_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_cobble_emission_multiplier') or 0.3 
+local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier') or 0.7
+local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier') or 0.5
 
 -- Definitions ---------------------------------------------------------
 
