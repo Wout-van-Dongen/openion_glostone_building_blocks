@@ -7,15 +7,11 @@ openion_glostone_building_blocks = {}
 local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs')
 
 --Light Emission
-local stone_emission = minetest.registered_nodes["ethereal:glostone"].light_source or 12
-local stone_stairs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_stone_stairs_emission") or 0.7
-local stone_slabs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_stone_slabs_emission") or 0.5
-local brick_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_brick_emission") or 0.9
-local brick_stairs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_brick_stairs_emission") or 0.7
-local brick_slabs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_brick_slabs_emission") or 0.5
-local block_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_block_emission") or 1
-local block_stairs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_block_stairs_emission") or 0.7
-local block_slabs_emission_multiplier = minetest.settings:get("openion_glostone_building_blocks_block_slabs_emission") or 0.5
+local stone_emission = minetest.registered_nodes['ethereal:glostone'].light_source or 12
+local brick_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_brick_emission_multiplier') or 0.9
+local block_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_block_emission_multiplier') or 1
+local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier') or 0.7
+local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier') or 0.5
 
 -- Definitions ---------------------------------------------------------
 
@@ -77,25 +73,25 @@ for node_name, def in pairs(node_defs) do
 	minetest.override_item(
         'stairs:stair_' .. node_name,
         {
-            light_source = def.light_source * stone_stairs_emission_multiplier
+            light_source = def.light_source * stair_emission_multiplier
         }
     )
     minetest.override_item(
         'stairs:stair_outer_' .. node_name,
         {
-            light_source = def.light_source * stone_stairs_emission_multiplier
+            light_source = def.light_source * stair_emission_multiplier
         }
     )
     minetest.override_item(
         'stairs:stair_inner_' .. node_name,
         {
-            light_source = def.light_source * stone_stairs_emission_multiplier
+            light_source = def.light_source * stair_emission_multiplier
         }
     )
     minetest.override_item(
         'stairs:slab_' .. node_name,
         {
-            light_source = def.light_source * stone_slabs_emission_multiplier
+            light_source = def.light_source * slab_emission_multiplier
         }
     )
     end
