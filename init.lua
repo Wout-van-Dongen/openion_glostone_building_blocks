@@ -8,10 +8,11 @@ local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_
 
 --Light Emission
 local stone_emission = minetest.registered_nodes['ethereal:glostone'].light_source or 12
-local brick_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_brick_emission_multiplier') or 0.9
-local block_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_block_emission_multiplier') or 1
-local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier') or 0.7
-local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier') or 0.5
+local brick_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_brick_emission_multiplier')-- or 0.9
+local block_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_block_emission_multiplier')-- or 1
+local cobble_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_cobble_emission_multiplier')-- or 0.3 
+local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier')-- or 0.7
+local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier')-- or 0.5
 
 -- Definitions ---------------------------------------------------------
 
@@ -35,6 +36,13 @@ local node_defs = {
 		},
 		light_source = stone_emission * block_emission_multiplier,
 	},
+	glostone_cobble = {
+		description = 'Glostone Cobble',
+		tiles = {
+			'ethereal_glostone.png^openion_glostone_building_blocks_cobble_overlay.png',
+		},
+		light_source = stone_emission * cobble_emission_multiplier,
+	}
 }
 
 -- Registering ---------------------------------------------------------
@@ -139,6 +147,26 @@ minetest.register_craft(
 		type = 'cooking',
 		output = 'ethereal:glostone',
 		recipe = 'openion_glostone_building_blocks:glostone_block',
+		cooktime = 9,
+	}
+)
+
+--Cobble Recipe
+minetest.register_craft(
+    {
+        output = 'openion_glostone_building_blocks:glostone_cobble',
+        recipe = {
+            {'ethereal:glostone'},
+        }
+    }
+)
+
+--Reverse Block Recipe
+minetest.register_craft(
+	{
+		type = 'cooking',
+		output = 'ethereal:glostone',
+		recipe = 'openion_glostone_building_blocks:glostone_cobble',
 		cooktime = 9,
 	}
 )
