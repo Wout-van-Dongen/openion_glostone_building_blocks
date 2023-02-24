@@ -20,7 +20,9 @@ end
 -- Settings ------------------------------------------------------------
 
 --Mods
-local enable_mod_stairs = minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs', true)
+local mod_name = minetest.get_current_modname()
+local enable_mod_stairs = minetest.get_modpath('stairs') ~= nil and minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_stairs', true)
+local enable_mod_moreblocks = minetest.get_modpath('moreblocks') ~= nil and minetest.settings:get_bool('openion_glostone_building_blocks_enable_mod_moreblocks', false)
 
  --Ethereal
 local glostone_def = minetest.registered_nodes['ethereal:glostone']
@@ -33,8 +35,268 @@ local block_emission_multiplier = minetest.settings:get('openion_glostone_buildi
 local cobble_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_cobble_emission_multiplier') or 0.3 
 local stair_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_stair_emission_multiplier') or 0.7
 local slab_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slab_emission_multiplier') or 0.5
+local micro_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_micro_emission_multiplier') or 0.125
+local panel_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_panel_emission_multiplier') or 0.5
+local slope_emission_multiplier = minetest.settings:get('openion_glostone_building_blocks_slope_emission_multiplier') or 0.5
 
+-- Data ----------------------------------------------------------------
 
+local data_node_light = {
+	stair = {
+		{
+			stairs = {prefix ='stairs:stair_', suffix = ''},
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = ''},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = {prefix = 'stairs:stair_outer_', suffix = ''},
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_outer'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = {prefix = 'stairs:stair_inner_', suffix = ''},
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_inner'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_half'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_right_half'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_alt'},
+			light_source_multiplier= stair_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_alt_1'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_alt_2'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':stair_', suffix = '_alt_4'},
+			light_source_multiplier = stair_emission_multiplier
+		},
+	},
+	--Slabs
+	slab = {
+		{
+			stairs = {prefix = 'stairs:slab_', suffix = ''},
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = ''},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_quarter'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_three_quarter'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_two_sides'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_three_sides'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_1'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_2'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_14'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':slab_', suffix = '_15'},
+			light_source_multiplier = slab_emission_multiplier
+		},
+	},
+	--Micro Blocks
+	micro = {
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':micro_', suffix = ''},
+			light_source_multiplier =  micro_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':micro_', suffix = '_1'},
+			light_source_multiplier = micro_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':micro_', suffix = '_2'},
+			light_source_multiplier = micro_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':micro_', suffix = '_4'},
+			light_source_multiplier = micro_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':micro_', suffix = '_12'},
+			light_source_multiplier = micro_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':micro_', suffix = '_14'},
+			light_source_multiplier = micro_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks =  {prefix = mod_name .. ':micro_', suffix = '_15'},
+			light_source_multiplier = micro_emission_multiplier
+		},
+	},
+	--Panels
+	panel = {
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = ''},
+			light_source_multiplier = panel_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = '_1'},
+			light_source_multiplier = panel_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = '_2'},
+			light_source_multiplier = panel_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = '_4'},
+			light_source_multiplier = panel_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = '_12'},
+			light_source_multiplier = panel_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = '_14'},
+			light_source_multiplier = panel_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':panel_', suffix = '_15'},
+			light_source_multiplier = panel_emission_multiplier
+		},
+	},
+	--Slopes
+	slope = {
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = ''},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_half'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_half_raised'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner_half'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner_half_raised'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner_cut'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner_cut_half'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner_cut_half_raised'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_inner'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_outer_half'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_outer_half_raised'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_outer_cut'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_outer_cut_half'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_outer_cut_half_raised'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+		{
+			stairs = nil,
+			moreblocks = {prefix = mod_name .. ':slope_', suffix = '_cut'},
+			light_source_multiplier = slope_emission_multiplier
+		},
+	},
+}
 
 -- Definitions ---------------------------------------------------------
 
@@ -65,61 +327,86 @@ local node_defs = {
 	}
 }
 
+
 -- Registering ---------------------------------------------------------
 
 for node_name, def in pairs(node_defs) do
 	local mod_prefix = 'ethereal:'
-	local new_def = table_copy(glostone_def)
-	table_update(new_def, def)
-	new_def.drop = mod_prefix .. node_name
+	local base_def = table_copy(glostone_def)
+	table_update(base_def, def)
+	base_def.drop = nil
 	
 	if minetest.registered_nodes[mod_prefix .. node_name] == nil then
-		mod_prefix = 'openion_glostone_building_blocks:'
-		
-		
+		mod_prefix = mod_name .. ':'
+				
 		minetest.register_node(
 			mod_prefix .. node_name,
-			new_def
+			base_def
 		)
 	end
 	
+	--Registering MoreBlocks
+	if enable_mod_moreblocks then
+				
+		stairsplus:register_all(
+            'openion_glostone_building_blocks',
+            node_name,
+            mod_prefix .. node_name,
+            base_def
+        )
+        
+        for index, cat in pairs(data_node_light) do
+			for jndex, entry in pairs(cat) do
+				--Set Lighting
+				minetest.override_item(
+					entry['moreblocks']['prefix'] .. node_name .. entry['moreblocks']['suffix'],
+					{
+						light_source = base_def.light_source * entry['light_source_multiplier']
+					}
+				)
+							
+				--Register Aliases
+				if entry['stairs'] ~= nil then
+					minetest.register_alias(
+						entry['stairs']['prefix'] .. node_name .. entry['stairs']['suffix'],
+						entry['moreblocks']['prefix'] .. node_name .. entry['moreblocks']['suffix']
+					)
+				end
+			end
+        end
+	end
+
 	--Registering Stairs
-	if minetest.get_modpath("stairs") ~= nil and enable_mod_stairs then
+	if enable_mod_stairs and not enable_mod_moreblocks then
 		stairs.register_stair_and_slab(
 			node_name,
 			mod_prefix .. node_name,
-			new_def.groups,
-			type(new_def.tiles) == 'table' and new_def.tiles or {new_def.tiles},
-			new_def.description .. ' Stair',
-			new_def.description .. ' Slab',
-			new_def.sounds
+			base_def.groups,
+			type(base_def.tiles) == 'table' and base_def.tiles or {base_def.tiles},
+			base_def.description .. ' Stair',
+			base_def.description .. ' Slab',
+			base_def.sounds
 		)
-	
-	--Override Light Emission
-	minetest.override_item(
-        'stairs:stair_' .. node_name,
-        {
-            light_source = new_def.light_source * stair_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_outer_' .. node_name,
-        {
-            light_source = new_def.light_source * stair_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:stair_inner_' .. node_name,
-        {
-            light_source = new_def.light_source * stair_emission_multiplier
-        }
-    )
-    minetest.override_item(
-        'stairs:slab_' .. node_name,
-        {
-            light_source = new_def.light_source * slab_emission_multiplier
-        }
-    )
+		
+		for index, cat in pairs(data_node_light) do
+			for jndex, entry in pairs(cat) do
+				if entry['stairs'] ~= nil then
+					--Set Lighting
+					minetest.override_item(
+						entry['stairs']['prefix'] .. node_name .. entry['stairs']['suffix'],
+						{
+							light_source = base_def.light_source * entry['light_source_multiplier']
+						}
+					)
+								
+					--Register Aliases
+					minetest.register_alias(
+						entry['moreblocks']['prefix'] .. node_name .. entry['moreblocks']['suffix'],
+						entry['stairs']['prefix'] .. node_name .. entry['stairs']['suffix']
+					)
+				end
+			end
+        end
     end
 end
 
